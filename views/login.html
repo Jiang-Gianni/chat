@@ -1,0 +1,48 @@
+{% import "github.com/Jiang-Gianni/chat/config" %}
+{% func LoginPage() %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Meta Description">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Login</title>
+    {%s= CommonImport() %}
+</head>
+
+<body>
+    <main class="container flex-row">
+        <article class="grid">
+            <div>
+                <hgroup>
+                    <h1>Log in or Register</h1>
+                    <h2>Enter your username and password</h2>
+                </hgroup>
+                <div class="text-center">
+                    <input type="text" name="username" placeholder="Username" aria-label="Username" required />
+                    <input type="password" name="password" placeholder="Password" aria-label="Password" required />
+
+                    <button type="submit" class="primary" hx-post="{%s config.LoginEndpoint %}"
+                        hx-include="[name='username'],[name='password']" hx-target="#error">Login</button>
+
+                    <button type="submit" class="contrast" hx-post="{%s config.RegisterEndpoint %}"
+                        hx-include="[name='username'],[name='password']" hx-target="#error">Register</button>
+
+                    <ins id="error" hidden></ins>
+
+                </div>
+            </div>
+        </article>
+
+    </main>
+</body>
+
+</html>
+
+{% endfunc %}
+
+{% func LoginRegisterError(text string) %}
+<strong id="error" class="contrast" hx-swap-oob="true">{%s text %}</strong>
+{% endfunc %}

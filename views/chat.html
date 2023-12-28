@@ -1,0 +1,138 @@
+{% import "github.com/Jiang-Gianni/chat/message" %}
+{% import "github.com/Jiang-Gianni/chat/room" %}
+{% import "github.com/Jiang-Gianni/chat/config" %}
+{% import "strconv" %}
+
+{% func ChatPage(rooms []room.Room, roomID int) %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    {%s= CommonImport() %}
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        #side-menu {
+            width: 15%;
+            background-color: #31a2be;
+        }
+
+        #chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .room {
+            padding: 0.75rem;
+            margin-left: 0.25rem;
+            margin-right: 0.25rem;
+        }
+
+        .room:hover {
+            cursor: pointer;
+            background-color: teal;
+        }
+    </style>
+</head>
+
+<body un-cloak>
+
+
+    <div id="discard"></div>
+
+    <dialog id="new-room">
+        <article>
+            <hgroup>
+                <h1>New Room</h1>
+                <h2>Enter a name for the room to chat</h2>
+            </hgroup>
+            <input type="text" name="room-name" placeholder="Room Name" aria-label="RoomName" required />
+            <footer>
+                <a href="#cancel" role="button" class="secondary" data-target="new-room"
+                    onclick="toggleModal(event)">Cancel</a>
+                <a href="#confirm" role="button" data-target="new-room" onclick="toggleModal(event)" hx-post={%s
+                    config.RoomEndpoint %} hx-target="#new-room-error" hx-include="[name='room-name']"
+                    hx-swap="innerHTML">Confirm</a>
+            </footer>
+        </article>
+    </dialog>
+
+
+    <!-- <div id="sse"></div>
+    <div hx-ext="sse" sse-connect="/sse" sse-swap="message" hx-target="#sse" hx-swap="afterbegin">
+        Contents of this box will be updated in real time
+        with every SSE message received from the chatroom.
+    </div> -->
+
+    {% code
+    var activeRoom room.Room
+    %}
+
+    <div id="side-menu" class="text-center">
+        <article class="room bg-white text-black" data-target="new-room" onclick="toggleModal(event)">
+            New Room
+            <div id="new-room-error"></div>
+        </article>
+        {% for i := range rooms %}
+        {% if int(rooms[i].ID) == roomID %}{% code activeRoom = rooms[i] %}
+        <article class="room bg-blue-900 outline">{%s rooms[i].Name %}</article>
+        {% else %}
+        <article class="room" hx-get="{%s config.ChatRedirectRoomIDEndpoint(int(rooms[i].ID)) %}">{%s rooms[i].Name %}
+        </article>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    {% if activeRoom.ID > 0 %}
+    <div id="chat-container">
+        <h2>{%s activeRoom.Name %}</h2>
+
+        <div id="message-list">
+            <div id="new-message"></div>
+        </div>
+
+        <div hx-ext="ws" ws-connect="/chat/{%s strconv.Itoa(int(activeRoom.ID)) %}/ws">
+            <div id="notifications"></div>
+            {%s= ChatInput() %}
+        </div>
+
+    </div>
+    {% endif %}
+
+</body>
+
+</html>
+{% endfunc %}
+
+{% func NewMessage(msg message.Message) %}
+<div id="new-message" hx-swap-oob="beforebegin">
+    <div class="message">{%s msg.Username %}: {%s msg.Message %}</div>
+</div>
+{%s= ChatInput() %}
+{% endfunc %}
+
+{% func ChatInput() %}
+<form id="form" ws-send>
+    <input name="message" autofocus>
+</form>
+{% endfunc %}
+
+
+{% func NewChatError(text string) %}
+<small hx-get="{%s config.DiscardEndpoint %}" class="text-red-700" hx-trigger="load delay:5s" hx-swap="outerHTML">{%s
+    text %}</small>
+{% endfunc %}
+
+
+{% func SSEMessage() %}<div>Hello there</div>
+
+{% endfunc %}
+{% func SSEMessage2() %}<div>Hello there</div>{% endfunc %}
