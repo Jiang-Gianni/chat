@@ -1,8 +1,12 @@
 # Chat
 
-# gRPC
+Chat application with a micro
 
-<p float="left">
-  <img src="./img/gRPC.svg" width="49%" height="1300"/>
-  <img src="./img/NATS.svg" width="50%" height="1300"/>
+<p>
+  <picture>
+  <img src="./img/gRPC.svg" width="49%" height="1200"/>
+  </picture>
+  <picture>
+  <img src="./img/NATS.svg" width="50%" height="1200"/>
+  </picture>
 </p>
