@@ -1,4 +1,4 @@
-title: gRPC {
+title: NATS {
   shape: text
   near: top-center
   style: {
@@ -19,6 +19,16 @@ DB{
     SQLite:""{
         shape: image
         icon: ./img/sqlite.png
+    }
+}
+
+NATS:{
+    shape:queue
+    NATS_img:""{
+        shape: image
+        icon: ./img/NATS.png
+        width: 400
+        height: 100
     }
 }
 
@@ -53,9 +63,11 @@ RoomService{
 Frontend -- WebService: WebSocket
 Frontend -- WebService: HTTP
 
-WebService -- UserService: gRPC
-WebService -- RoomService: gRPC
-WebService -- MessageService: gRPC
+WebService -- NATS
+
+NATS -- UserService
+NATS -- RoomService
+NATS -- MessageService
 
 UserService -- DB
 RoomService -- DB
