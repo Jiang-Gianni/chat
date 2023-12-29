@@ -5,35 +5,48 @@ import (
 	"fmt"
 
 	"github.com/Jiang-Gianni/chat/dfrr"
+	"golang.org/x/crypto/bcrypt"
 )
 
-func login(ctx context.Context, q Querier, username, password string) (rerr error) {
+func login(ctx context.Context, q Querier, username, password string) (userID int, rerr error) {
 	defer dfrr.Wrap(&rerr, "login")
+	count, err := q.CountUser(ctx, username)
+	if err != nil {
+		return userID, fmt.Errorf("q.CountUser: %w", err)
+	}
+	if int(count) == 0 {
+		return userID, InvalidCredentialsError
+	}
 	user, err := q.GetUser(ctx, username)
 	if err != nil {
-		return fmt.Errorf("q.GetUser: %w", err)
+		return userID, fmt.Errorf("q.GetUser: %w", err)
 	}
-	if user.Password != password {
-		return InvalidCredentialsError
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return userID, InvalidCredentialsError
 	}
-	return nil
+	return int(user.ID), nil
 }
 
-func register(ctx context.Context, q Querier, username, password string) (rerr error) {
+func register(ctx context.Context, q Querier, username, password string) (userID int, rerr error) {
 	defer dfrr.Wrap(&rerr, "register")
 	count, err := q.CountUser(ctx, username)
 	if err != nil {
-		return fmt.Errorf("q.CountUser: %w", err)
+		return userID, fmt.Errorf("q.CountUser: %w", err)
 	}
 	if int(count) > 0 {
-		return UsernameTakenError
+		return userID, UsernameTakenError
 	}
-	err = q.InsertUser(ctx, InsertUserParams{
+	hashedPw, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return userID, fmt.Errorf("bcrypt.GenerateFromPassword: %w", err)
+	}
+	id, err := q.InsertUser(ctx, InsertUserParams{
 		Username: username,
-		Password: password,
+		Password: string(hashedPw),
 	})
 	if err != nil {
-		return fmt.Errorf("q.InsertUser: %w", err)
+		return userID, fmt.Errorf("q.InsertUser: %w", err)
 	}
-	return nil
+	return int(id), nil
 }

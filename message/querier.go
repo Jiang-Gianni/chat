@@ -10,7 +10,9 @@ import (
 
 type Querier interface {
 	GetMessageByID(ctx context.Context, id int64) (Message, error)
+	GetMessageByRoomID(ctx context.Context, roomID int64) ([]Message, error)
 	GetMessages(ctx context.Context) ([]Message, error)
+	InsertMessage(ctx context.Context, arg InsertMessageParams) (Message, error)
 }
 
 var _ Querier = (*Queries)(nil)

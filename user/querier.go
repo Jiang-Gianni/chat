@@ -11,7 +11,7 @@ import (
 type Querier interface {
 	CountUser(ctx context.Context, username string) (int64, error)
 	GetUser(ctx context.Context, username string) (User, error)
-	InsertUser(ctx context.Context, arg InsertUserParams) error
+	InsertUser(ctx context.Context, arg InsertUserParams) (int64, error)
 }
 
 var _ Querier = (*Queries)(nil)

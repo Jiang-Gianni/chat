@@ -12,7 +12,7 @@
     {%s= CommonImport() %}
 </head>
 
-<body>
+<body un-cloak>
     <main class="container flex-row">
         <article class="grid">
             <div>
@@ -40,9 +40,9 @@
 </body>
 
 </html>
-
 {% endfunc %}
 
+<!-- In case of errors from login/register it targets id="error"-->
 {% func LoginRegisterError(text string) %}
 <strong id="error" class="contrast" hx-swap-oob="true">{%s text %}</strong>
 {% endfunc %}

@@ -36,8 +36,8 @@ func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
 	return i, err
 }
 
-const insertUser = `-- name: InsertUser :exec
-insert into user(username, password, last_room_id) values (?1, ?2, -1)
+const insertUser = `-- name: InsertUser :one
+insert into user(username, password, last_room_id) values (?1, ?2, -1) returning id
 `
 
 type InsertUserParams struct {
@@ -45,7 +45,9 @@ type InsertUserParams struct {
 	Password string `json:"password"`
 }
 
-func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) error {
-	_, err := q.db.ExecContext(ctx, insertUser, arg.Username, arg.Password)
-	return err
+func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, insertUser, arg.Username, arg.Password)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
 }

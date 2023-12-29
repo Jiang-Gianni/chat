@@ -5,10 +5,13 @@ go 1.21.2
 require (
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/go-chi/chi/v5 v5.0.11
+	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/gorilla/websocket v1.5.1
 	github.com/mattn/go-sqlite3 v1.14.19
 	github.com/pbar1/pkill-go v1.0.0
 	github.com/valyala/quicktemplate v1.7.0
+	golang.org/x/crypto v0.14.0
+	golang.org/x/sync v0.4.0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.32.0
 )

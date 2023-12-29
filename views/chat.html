@@ -1,9 +1,9 @@
 {% import "github.com/Jiang-Gianni/chat/message" %}
 {% import "github.com/Jiang-Gianni/chat/room" %}
 {% import "github.com/Jiang-Gianni/chat/config" %}
-{% import "strconv" %}
+{% import "time" %}
 
-{% func ChatPage(rooms []room.Room, roomID int) %}
+{% func ChatPage(rooms []room.Room, roomID int, messages []message.Message, username string) %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,6 +40,17 @@
             cursor: pointer;
             background-color: teal;
         }
+
+        .message {
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .message .timestamp {
+            font-size: 13px;
+        }
     </style>
 </head>
 
@@ -65,18 +76,14 @@
         </article>
     </dialog>
 
-
-    <!-- <div id="sse"></div>
-    <div hx-ext="sse" sse-connect="/sse" sse-swap="message" hx-target="#sse" hx-swap="afterbegin">
-        Contents of this box will be updated in real time
-        with every SSE message received from the chatroom.
-    </div> -->
-
     {% code
     var activeRoom room.Room
     %}
 
     <div id="side-menu" class="text-center">
+        <article class="room bg-gray text-black" hx-post="{%s config.LogoutEndpoint %}">
+            Logout
+        </article>
         <article class="room bg-white text-black" data-target="new-room" onclick="toggleModal(event)">
             New Room
             <div id="new-room-error"></div>
@@ -96,11 +103,13 @@
         <h2>{%s activeRoom.Name %}</h2>
 
         <div id="message-list">
+            {% for i := range messages %}
+            {%s= singleMessage(messages[i], messages[i].Username == username ) %}
+            {% endfor %}
             <div id="new-message"></div>
         </div>
 
-        <div hx-ext="ws" ws-connect="/chat/{%s strconv.Itoa(int(activeRoom.ID)) %}/ws">
-            <div id="notifications"></div>
+        <div hx-ext="ws" ws-connect="{%s config.ChatWsEndpoint(int(activeRoom.ID)) %}">
             {%s= ChatInput() %}
         </div>
 
@@ -112,27 +121,40 @@
 </html>
 {% endfunc %}
 
-{% func NewMessage(msg message.Message) %}
-<div id="new-message" hx-swap-oob="beforebegin">
-    <div class="message">{%s msg.Username %}: {%s msg.Message %}</div>
+<!-- Single message (currentUser have different background color) -->
+{% func singleMessage(msg message.Message, isYou bool) %}
+{% if isYou %}
+<div class="message justify-start flex items-center bg-cyan-700">
+    <span class="timestamp p-1">{%s msg.SentAt.UTC().Format(time.ANSIC) %}</span>
+    <strong class="username p-1">({%s msg.Username %})</strong> {%s msg.Message %}
 </div>
-{%s= ChatInput() %}
+{% else %}
+<div class="message justify-start flex items-center">
+    <span class="timestamp p-1">{%s msg.SentAt.UTC().Format(time.ANSIC) %}</span>
+    <strong class="username p-1">({%s msg.Username %})</strong> {%s msg.Message %}
+</div>
+{% endif %}
 {% endfunc %}
 
+<!-- ChatInput is to reset the input text content after a send if currentUser -->
+{% func NewMessage(msg message.Message, currentUser string) %}
+{% if msg.Username == currentUser %}
+{%s= ChatInput() %}
+{% endif %}
+<div id="new-message" hx-swap-oob="beforebegin">
+    {%s= singleMessage(msg, msg.Username == currentUser) %}
+</div>
+{% endfunc %}
+
+<!-- Text area for the input -->
 {% func ChatInput() %}
 <form id="form" ws-send>
     <input name="message" autofocus>
 </form>
 {% endfunc %}
 
-
+<!-- In case of errors from confirming a new room creation it targets id="new-room-error"-->
 {% func NewChatError(text string) %}
 <small hx-get="{%s config.DiscardEndpoint %}" class="text-red-700" hx-trigger="load delay:5s" hx-swap="outerHTML">{%s
     text %}</small>
 {% endfunc %}
-
-
-{% func SSEMessage() %}<div>Hello there</div>
-
-{% endfunc %}
-{% func SSEMessage2() %}<div>Hello there</div>{% endfunc %}

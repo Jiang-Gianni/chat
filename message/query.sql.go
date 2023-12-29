@@ -7,10 +7,11 @@ package message
 
 import (
 	"context"
+	"time"
 )
 
 const getMessageByID = `-- name: GetMessageByID :one
-select id, room_id, username, message, sent_at from message where id = ?
+select id, room_id, username, message, sent_at from message where id = ?1
 `
 
 func (q *Queries) GetMessageByID(ctx context.Context, id int64) (Message, error) {
@@ -24,6 +25,39 @@ func (q *Queries) GetMessageByID(ctx context.Context, id int64) (Message, error)
 		&i.SentAt,
 	)
 	return i, err
+}
+
+const getMessageByRoomID = `-- name: GetMessageByRoomID :many
+select id, room_id, username, message, sent_at from message where room_id = ?1 limit 10
+`
+
+func (q *Queries) GetMessageByRoomID(ctx context.Context, roomID int64) ([]Message, error) {
+	rows, err := q.db.QueryContext(ctx, getMessageByRoomID, roomID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Message
+	for rows.Next() {
+		var i Message
+		if err := rows.Scan(
+			&i.ID,
+			&i.RoomID,
+			&i.Username,
+			&i.Message,
+			&i.SentAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getMessages = `-- name: GetMessages :many
@@ -57,4 +91,38 @@ func (q *Queries) GetMessages(ctx context.Context) ([]Message, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const insertMessage = `-- name: InsertMessage :one
+insert into message(room_id, username, message, sent_at) values (
+    ?1,
+    ?2,
+    ?3,
+    ?4
+) returning id, room_id, username, message, sent_at
+`
+
+type InsertMessageParams struct {
+	RoomID   int64     `json:"room_id"`
+	Username string    `json:"username"`
+	Message  string    `json:"message"`
+	SentAt   time.Time `json:"sent_at"`
+}
+
+func (q *Queries) InsertMessage(ctx context.Context, arg InsertMessageParams) (Message, error) {
+	row := q.db.QueryRowContext(ctx, insertMessage,
+		arg.RoomID,
+		arg.Username,
+		arg.Message,
+		arg.SentAt,
+	)
+	var i Message
+	err := row.Scan(
+		&i.ID,
+		&i.RoomID,
+		&i.Username,
+		&i.Message,
+		&i.SentAt,
+	)
+	return i, err
 }

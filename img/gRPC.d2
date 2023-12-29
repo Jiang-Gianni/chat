@@ -1,0 +1,55 @@
+direction: down
+
+Frontend{
+    htmx{
+        shape: image
+        icon: ./img/htmx.png
+    }
+}
+
+DB:""{
+    shape:cylinder
+    SQLite{
+        shape: image
+        icon: ./img/sqlite.png
+    }
+}
+
+WebService:{
+    Go{
+        shape:image
+        icon: ./img/gopher.png
+    }
+}
+
+UserService{
+    Go{
+        shape:image
+        icon: ./img/gopher.png
+    }
+}
+
+MessageService{
+    Go{
+        shape:image
+        icon: ./img/gopher.png
+    }
+}
+
+RoomService{
+    Go{
+        shape:image
+        icon: ./img/gopher.png
+    }
+}
+
+Frontend -- WebService: WebSocket
+Frontend -- WebService: HTTP
+
+WebService -- UserService: gRPC
+WebService -- RoomService: gRPC
+WebService -- MessageService: gRPC
+
+UserService -- DB
+RoomService -- DB
+MessageService -- DB

@@ -8,6 +8,7 @@ package room
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -55,8 +56,7 @@ type RoomServer interface {
 }
 
 // UnimplementedRoomServer must be embedded to have forward compatible implementations.
-type UnimplementedRoomServer struct {
-}
+type UnimplementedRoomServer struct{}
 
 func (UnimplementedRoomServer) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")

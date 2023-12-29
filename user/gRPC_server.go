@@ -2,11 +2,14 @@ package user
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 
 	"github.com/Jiang-Gianni/chat/dfrr"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 type GRPCServer struct {
@@ -25,10 +28,14 @@ func (g *GRPCServer) Register(
 	req *RegisterRequest,
 ) (resp *RegisterResponse, derr error) {
 	defer dfrr.Wrap(&derr, "g.Register")
-	if err := register(ctx, g, req.Username, req.Password); err != nil {
-		return nil, err
+	id, err := register(ctx, g, req.Username, req.Password)
+	if errors.Is(err, UsernameTakenError) {
+		return nil, status.Errorf(codes.AlreadyExists, err.Error())
 	}
-	return &RegisterResponse{}, nil
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &RegisterResponse{UserId: int32(id)}, nil
 }
 
 func (g *GRPCServer) Login(
@@ -36,10 +43,14 @@ func (g *GRPCServer) Login(
 	req *LoginRequest,
 ) (resp *LoginResponse, derr error) {
 	defer dfrr.Wrap(&derr, "g.Login")
-	if err := login(ctx, g, req.Username, req.Password); err != nil {
-		return nil, err
+	id, err := login(ctx, g, req.Username, req.Password)
+	if errors.Is(err, InvalidCredentialsError) {
+		return nil, status.Errorf(codes.Unauthenticated, err.Error())
 	}
-	return &LoginResponse{}, nil
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	return &LoginResponse{UserId: int32(id)}, nil
 }
 
 func (g *GRPCServer) RunGRPC(addr string, opts ...grpc.ServerOption) (derr error) {

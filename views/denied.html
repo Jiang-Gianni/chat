@@ -1,0 +1,39 @@
+{% func DeniedPage() %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Access Denied</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Meta Description">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    {%s= CommonImport() %}
+</head>
+
+<body un-cloak>
+    <main class="container flex-row">
+        <article class="grid">
+            <div>
+                <hgroup>
+                    <h1>Access Denied</h1>
+                    <h2>Your access was denied because you are not authenticated or you don't have the right permissions
+                    </h2>
+                </hgroup>
+                <div class="text-center">
+                    <strong>
+                        <a href="/">Return to Login</a>
+                    </strong>
+
+
+                    <ins id="error" hidden></ins>
+
+                </div>
+            </div>
+        </article>
+
+    </main>
+</body>
+
+</html>
+{% endfunc %}

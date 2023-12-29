@@ -6,4 +6,6 @@ var (
 	UserServiceAddr    = ":3001"
 	RoomServiceAddr    = ":3002"
 	MessageServiceAddr = ":3003"
+
+	RoomIDStringKey = "room_id"
 )

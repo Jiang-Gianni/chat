@@ -40,7 +40,7 @@ func StreamLoginPage(qw422016 *qt422016.Writer) {
 	qw422016.N().S(`
 </head>
 
-<body>
+<body un-cloak>
     <main class="container flex-row">
         <article class="grid">
             <div>
@@ -76,36 +76,37 @@ func StreamLoginPage(qw422016 *qt422016.Writer) {
 </body>
 
 </html>
-
 `)
-//line views/login.html:44
+//line views/login.html:43
 }
 
-//line views/login.html:44
+//line views/login.html:43
 func WriteLoginPage(qq422016 qtio422016.Writer) {
-//line views/login.html:44
+//line views/login.html:43
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line views/login.html:44
+//line views/login.html:43
 	StreamLoginPage(qw422016)
-//line views/login.html:44
+//line views/login.html:43
 	qt422016.ReleaseWriter(qw422016)
-//line views/login.html:44
+//line views/login.html:43
 }
 
-//line views/login.html:44
+//line views/login.html:43
 func LoginPage() string {
-//line views/login.html:44
+//line views/login.html:43
 	qb422016 := qt422016.AcquireByteBuffer()
-//line views/login.html:44
+//line views/login.html:43
 	WriteLoginPage(qb422016)
-//line views/login.html:44
+//line views/login.html:43
 	qs422016 := string(qb422016.B)
-//line views/login.html:44
+//line views/login.html:43
 	qt422016.ReleaseByteBuffer(qb422016)
-//line views/login.html:44
+//line views/login.html:43
 	return qs422016
-//line views/login.html:44
+//line views/login.html:43
 }
+
+// <!-- In case of errors from login/register it targets id="error"-->
 
 //line views/login.html:46
 func StreamLoginRegisterError(qw422016 *qt422016.Writer, text string) {

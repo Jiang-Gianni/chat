@@ -42,9 +42,10 @@ type FW struct {
 type WatchFunc func(filename string, fw *FW)
 
 const (
-	webService  = "./cmd/gRPC/webService"
-	userService = "./cmd/gRPC/userService"
-	roomService = "./cmd/gRPC/roomService"
+	webService     = "./cmd/gRPC/webService"
+	userService    = "./cmd/gRPC/userService"
+	roomService    = "./cmd/gRPC/roomService"
+	messageService = "./cmd/gRPC/messageService"
 )
 
 var fws = []FW{
@@ -70,6 +71,13 @@ var fws = []FW{
 		run:         GoWatch(roomService, "roomService"),
 	},
 	{
+		directories: []string{"./message", messageService},
+		regexMatch:  ".go$",
+		ticker:      time.NewTicker(time.Second),
+		signal:      make(chan struct{}),
+		run:         GoWatch(messageService, "messageService"),
+	},
+	{
 		directories: []string{"./views"},
 		regexMatch:  ".html$",
 		ticker:      time.NewTicker(time.Second),
@@ -82,7 +90,7 @@ var fws = []FW{
 		regexMatch:  ".proto$",
 		ticker:      time.NewTicker(time.Second),
 		run: func(filename string, fw *FW) {
-			RunCmd(exec.Command("buf", "generate"), false)
+			RunCmd(exec.Command("buf", "generate"), true)
 		},
 	},
 	{
