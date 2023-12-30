@@ -26,8 +26,8 @@ func main() {
 		EC:   ec,
 		// TODO Logger
 		Log:            slog.Default(),
-		MessageQuerier: message.New(config.Sqlite),
-		RoomQuerier:    room.New(config.Sqlite),
+		MessageQuerier: message.New(config.Sqlite()),
+		RoomQuerier:    room.New(config.Sqlite()),
 	}
 	config.PrintListening(config.WebService, config.WebServiceAddr)
 	log.Fatal(n.Run())

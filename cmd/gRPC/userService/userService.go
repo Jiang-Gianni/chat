@@ -9,7 +9,7 @@ import (
 
 func main() {
 	g := user.GRPCServer{
-		Queries: *user.New(config.Sqlite),
+		Queries: *user.New(config.Sqlite()),
 	}
 	config.PrintListening(config.UserService, config.UserServiceAddr)
 	log.Fatal(g.Run(config.UserServiceAddr))

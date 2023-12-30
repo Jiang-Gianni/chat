@@ -10,7 +10,7 @@ import (
 
 func main() {
 	g := message.GRPCServer{
-		Queries:     *message.New(config.Sqlite),
+		Queries:     *message.New(config.Sqlite()),
 		RoomStreams: map[string]map[*message.Message_StreamMessageServer]struct{}{},
 		Lock:        &sync.Mutex{},
 	}

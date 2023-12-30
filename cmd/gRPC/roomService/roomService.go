@@ -9,7 +9,7 @@ import (
 
 func main() {
 	g := room.GRPCServer{
-		Queries: *room.New(config.Sqlite),
+		Queries: *room.New(config.Sqlite()),
 	}
 	config.PrintListening(config.RoomService, config.RoomServiceAddr)
 	log.Fatal(g.Run(config.RoomServiceAddr))

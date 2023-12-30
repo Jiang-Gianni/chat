@@ -53,9 +53,9 @@ RoomService{
 Frontend -- WebService: WebSocket
 Frontend -- WebService: HTTP
 
-WebService -- UserService: gRPC
-WebService -- RoomService: gRPC
-WebService -- MessageService: gRPC
+WebService -- UserService: gRPC HTTP/2
+WebService -- RoomService: gRPC HTTP/2
+WebService -- MessageService: gRPC HTTP/2
 
 UserService -- DB
 RoomService -- DB

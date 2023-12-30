@@ -35,7 +35,7 @@ func (g *GRPCServer) Register(
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	return resp, nil
+	return &RegisterResponse{}, nil
 }
 
 func (g *GRPCServer) Login(
@@ -43,7 +43,6 @@ func (g *GRPCServer) Login(
 	req *LoginRequest,
 ) (resp *LoginResponse, derr error) {
 	defer dfrr.Wrap(&derr, "g.Login")
-	resp = &LoginResponse{}
 	err := login(ctx, g, req.Username, req.Password)
 	if errors.Is(err, InvalidCredentialsError) {
 		return nil, status.Errorf(codes.Unauthenticated, err.Error())
@@ -51,7 +50,7 @@ func (g *GRPCServer) Login(
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	return resp, nil
+	return &LoginResponse{}, nil
 }
 
 func (g *GRPCServer) Run(addr string, opts ...grpc.ServerOption) (derr error) {

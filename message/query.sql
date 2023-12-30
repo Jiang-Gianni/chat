@@ -1,9 +1,3 @@
--- name: GetMessages :many
-select * from message;
-
--- name: GetMessageByID :one
-select * from message where id = sqlc.arg(id);
-
 -- name: GetMessageByRoomID :many
 select A.* from (
     select * from message where room_id = sqlc.arg(room_id) order by id desc limit 10

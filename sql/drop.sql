@@ -1,3 +1,3 @@
-drop table message;
-drop table room;
-drop table user;
+drop table if exists message;
+drop table if exists room;
+drop table if exists user;

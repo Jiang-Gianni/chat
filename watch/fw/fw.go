@@ -43,8 +43,8 @@ type WatchFunc func(filename string, fw *FW)
 
 var (
 	// 'gRPC' or 'NATS'
-	// version = "gRPC"
-	version        = "NATS"
+	version = "gRPC"
+	// version        = "NATS"
 	webService     = "./cmd/" + version + "/webService"
 	userService    = "./cmd/" + version + "/userService"
 	roomService    = "./cmd/" + version + "/roomService"

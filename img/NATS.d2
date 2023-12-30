@@ -63,11 +63,11 @@ RoomService{
 Frontend -- WebService: WebSocket
 Frontend -- WebService: HTTP
 
-WebService -- NATS
+WebService -- NATS: tcp ip
 
-NATS -- UserService
-NATS -- RoomService
-NATS -- MessageService
+NATS -- UserService: tcp ip
+NATS -- RoomService: tcp ip
+NATS -- MessageService: tcp ip
 
 UserService -- DB
 RoomService -- DB

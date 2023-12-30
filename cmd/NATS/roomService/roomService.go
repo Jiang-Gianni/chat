@@ -15,7 +15,7 @@ func main() {
 	}
 	n := room.NATSServer{
 		NATS:    nc,
-		Queries: *room.New(config.Sqlite),
+		Queries: *room.New(config.Sqlite()),
 	}
 	config.PrintListening(config.RoomService, config.RoomServiceAddr)
 	log.Fatal(n.Run())

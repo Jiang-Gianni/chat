@@ -38,8 +38,8 @@ func main() {
 		Log:            slog.Default(),
 		UserClient:     userClient,
 		RoomClient:     roomClient,
-		MessageQuerier: message.New(config.Sqlite),
-		RoomQuerier:    room.New(config.Sqlite),
+		MessageQuerier: message.New(config.Sqlite()),
+		RoomQuerier:    room.New(config.Sqlite()),
 	}
 
 	config.PrintListening(config.WebService, config.WebServiceAddr)

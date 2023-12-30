@@ -10,23 +10,6 @@ import (
 	"time"
 )
 
-const getMessageByID = `-- name: GetMessageByID :one
-select id, room_id, username, message, sent_at from message where id = ?1
-`
-
-func (q *Queries) GetMessageByID(ctx context.Context, id int64) (Message, error) {
-	row := q.db.QueryRowContext(ctx, getMessageByID, id)
-	var i Message
-	err := row.Scan(
-		&i.ID,
-		&i.RoomID,
-		&i.Username,
-		&i.Message,
-		&i.SentAt,
-	)
-	return i, err
-}
-
 const getMessageByRoomID = `-- name: GetMessageByRoomID :many
 select a.id, a.room_id, a.username, a.message, a.sent_at from (
     select id, room_id, username, message, sent_at from message where room_id = ?1 order by id desc limit 10
@@ -35,39 +18,6 @@ select a.id, a.room_id, a.username, a.message, a.sent_at from (
 
 func (q *Queries) GetMessageByRoomID(ctx context.Context, roomID int64) ([]Message, error) {
 	rows, err := q.db.QueryContext(ctx, getMessageByRoomID, roomID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Message
-	for rows.Next() {
-		var i Message
-		if err := rows.Scan(
-			&i.ID,
-			&i.RoomID,
-			&i.Username,
-			&i.Message,
-			&i.SentAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getMessages = `-- name: GetMessages :many
-select id, room_id, username, message, sent_at from message
-`
-
-func (q *Queries) GetMessages(ctx context.Context) ([]Message, error) {
-	rows, err := q.db.QueryContext(ctx, getMessages)
 	if err != nil {
 		return nil, err
 	}

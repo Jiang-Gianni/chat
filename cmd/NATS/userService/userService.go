@@ -15,7 +15,7 @@ func main() {
 	}
 	n := user.NATSServer{
 		NATS:    nc,
-		Queries: *user.New(config.Sqlite),
+		Queries: *user.New(config.Sqlite()),
 	}
 	config.PrintListening(config.UserService, config.UserServiceAddr)
 	log.Fatal(n.Run())

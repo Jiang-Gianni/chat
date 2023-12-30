@@ -12,15 +12,11 @@ message RegisterRequest {
   string password = 2;
 }
 
-message RegisterResponse {
-  int32 status_code = 1;
-}
+message RegisterResponse {}
 
 message LoginRequest {
   string username = 1;
   string password = 2;
 }
 
-message LoginResponse {
-  int32 status_code = 1;
-}
+message LoginResponse {}
