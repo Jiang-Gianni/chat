@@ -12,13 +12,17 @@ import (
 func (g *GRPCServer) postRoom() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		roomName := r.FormValue("room-name")
+		if roomName == "" {
+			views.WriteNewChatError(w, InvalidRoomName)
+			return
+		}
 		req := &room.CreateRequest{
 			RoomName: roomName,
 		}
 		resp, err := g.RoomClient.Create(r.Context(), req)
 		if err != nil {
 			g.Log.Error(fmt.Sprintf("roomClient.Create: %s", err), "service", "web")
-			views.WriteNewChatError(w, "post error")
+			views.WriteNewChatError(w, InternalServerError)
 			return
 		}
 		w.Header().Add("HX-Redirect", config.ChatRoomIDEndpoint(int(resp.RoomId)))

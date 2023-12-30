@@ -28,7 +28,9 @@ func (q *Queries) GetMessageByID(ctx context.Context, id int64) (Message, error)
 }
 
 const getMessageByRoomID = `-- name: GetMessageByRoomID :many
-select id, room_id, username, message, sent_at from message where room_id = ?1 limit 10
+select a.id, a.room_id, a.username, a.message, a.sent_at from (
+    select id, room_id, username, message, sent_at from message where room_id = ?1 order by id desc limit 10
+) A order by A.id asc
 `
 
 func (q *Queries) GetMessageByRoomID(ctx context.Context, roomID int64) ([]Message, error) {

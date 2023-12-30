@@ -13,7 +13,7 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  int32 user_id = 1;
+  int32 status_code = 1;
 }
 
 message LoginRequest {
@@ -22,5 +22,5 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  int32 user_id = 1;
+  int32 status_code = 1;
 }

@@ -12,3 +12,10 @@ var _ error = (*userError)(nil)
 func (e userError) Error() string {
 	return string(e)
 }
+
+const (
+	StatusOK int = iota
+	StatusInternalError
+	StatusInvalidCredentials
+	StatusUsernameTaken
+)

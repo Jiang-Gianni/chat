@@ -1,6 +1,6 @@
 package config
 
-// Port
+// Port and keys
 var (
 	WebServiceAddr     = ":3000"
 	UserServiceAddr    = ":3001"

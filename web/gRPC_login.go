@@ -14,26 +14,27 @@ func (g *GRPCServer) postLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		username, password := r.FormValue("username"), r.FormValue("password")
 		if username == "" || password == "" {
-			views.WriteLoginRegisterError(w, "Invalid username or password")
+			views.WriteLoginRegisterError(w, InvalidUsernamePassword)
 			return
 		}
 		req := &user.LoginRequest{
 			Username: username,
 			Password: password,
 		}
-		resp, err := g.UserClient.Login(r.Context(), req)
+		_, err := g.UserClient.Login(r.Context(), req)
 		if err != nil {
 			g.Log.Info(err.Error(), "service", "web")
 			if status, ok := status.FromError(err); ok && status.Code() == codes.Unauthenticated {
-				views.WriteLoginRegisterError(w, "Invalid credentials")
+				views.WriteLoginRegisterError(w, InvalidCredentials)
 				return
 			}
-			views.WriteLoginRegisterError(w, "Internal Server Error")
+			views.WriteLoginRegisterError(w, InternalServerError)
 			return
 		}
-		if err := tokenJWT(w, int(resp.UserId), username); err != nil {
+		if err := tokenJWT(w, username); err != nil {
 			g.Log.Error(err.Error(), "service", "web")
-			views.WriteLoginRegisterError(w, "Internal Server Error")
+			views.WriteLoginRegisterError(w, InternalServerError)
+			return
 		}
 		w.Header().Add("HX-Redirect", config.ChatEndpoint)
 	}
@@ -43,26 +44,27 @@ func (g *GRPCServer) postRegister() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		username, password := r.FormValue("username"), r.FormValue("password")
 		if username == "" || password == "" {
-			views.WriteLoginRegisterError(w, "Invalid username or password")
+			views.WriteLoginRegisterError(w, InvalidUsernamePassword)
 			return
 		}
 		req := &user.RegisterRequest{
 			Username: username,
 			Password: password,
 		}
-		resp, err := g.UserClient.Register(r.Context(), req)
+		_, err := g.UserClient.Register(r.Context(), req)
 		if err != nil {
 			g.Log.Info(err.Error(), "service", "web")
 			if status, ok := status.FromError(err); ok && status.Code() == codes.AlreadyExists {
-				views.WriteLoginRegisterError(w, "Username already taken")
+				views.WriteLoginRegisterError(w, UsernameAlreadyTaken)
 				return
 			}
-			views.WriteLoginRegisterError(w, "Internal Server Error")
+			views.WriteLoginRegisterError(w, InternalServerError)
 			return
 		}
-		if err := tokenJWT(w, int(resp.UserId), username); err != nil {
+		if err := tokenJWT(w, username); err != nil {
 			g.Log.Error(err.Error(), "service", "web")
-			views.WriteLoginRegisterError(w, "Internal Server Error")
+			views.WriteLoginRegisterError(w, InternalServerError)
+			return
 		}
 		w.Header().Add("HX-Redirect", config.ChatEndpoint)
 	}

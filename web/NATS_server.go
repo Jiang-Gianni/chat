@@ -9,44 +9,44 @@ import (
 	"github.com/Jiang-Gianni/chat/dfrr"
 	"github.com/Jiang-Gianni/chat/message"
 	"github.com/Jiang-Gianni/chat/room"
-	"github.com/Jiang-Gianni/chat/user"
 	"github.com/go-chi/chi/v5"
+	"github.com/nats-io/nats.go"
 )
 
-type GRPCServer struct {
+type NATSServer struct {
 	MessageQuerier message.Querier
 	RoomQuerier    room.Querier
 	Addr           string
 	Log            *slog.Logger
-	UserClient     *user.GRPCClient
-	RoomClient     *room.GRPCClient
+	NATS           *nats.Conn
+	EC             *nats.EncodedConn
 }
 
-func (g *GRPCServer) Run() (rerr error) {
+func (n *NATSServer) Run() (rerr error) {
 	defer dfrr.Wrap(&rerr, "g.Run")
 	r := chi.NewRouter()
 	r.Get(config.DiscardEndpoint, func(w http.ResponseWriter, r *http.Request) {})
 
 	r.Get(config.IndexEndpoint, index())
 
-	r.Post(config.LoginEndpoint, g.postLogin())
-	r.Post(config.RegisterEndpoint, g.postRegister())
+	r.Post(config.LoginEndpoint, n.postLogin())
+	r.Post(config.RegisterEndpoint, n.postRegister())
 	r.Get(config.DeniedEndpoint, getDenied())
 	r.Post(config.LogoutEndpoint, postLogout())
 
 	// Grouping the endpoints that requires authentication
 	r.Route(config.IndexEndpoint, func(cr chi.Router) {
 		cr.Use(requireAuth())
-		cr.Get(config.ChatEndpoint, g.getChat())
-		cr.Get(config.ChatParamEndpoint, g.getChat())
+		cr.Get(config.ChatEndpoint, n.getChat())
+		cr.Get(config.ChatParamEndpoint, n.getChat())
 		cr.Get(config.ChatRedirectParamEndpoint, getChatRedirect())
-		cr.Post(config.RoomEndpoint, g.postRoom())
-		cr.Get(config.ChatWsEndParampoint, g.getChatWs())
+		cr.Post(config.RoomEndpoint, n.postRoom())
+		cr.Get(config.ChatWsEndParampoint, n.getChatWs())
 	})
 
 	// Write timeout removed to support server side events
 	srv := http.Server{
-		Addr:        g.Addr,
+		Addr:        n.Addr,
 		Handler:     r,
 		ReadTimeout: 5 * time.Second,
 		IdleTimeout: 5 * time.Second,

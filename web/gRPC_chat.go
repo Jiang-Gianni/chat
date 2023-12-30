@@ -31,7 +31,7 @@ func (g *GRPCServer) getChat() http.HandlerFunc {
 		if roomID > 0 && err != nil {
 			g.Log.Error(fmt.Sprintf("cs.GetMessageByRoomID: %s", err), "service", "web")
 		}
-		_, username := userIDUserName(r)
+		username := ctxUsername(r)
 		views.WriteChatPage(w, rooms, roomID, messages, username)
 	}
 }
@@ -79,7 +79,7 @@ func (g *GRPCServer) getChatWs() http.HandlerFunc {
 			}
 		}()
 
-		_, username := userIDUserName(r)
+		username := ctxUsername(r)
 		msr := &message.StreamRequest{
 			RoomId:   int32(roomID),
 			Username: username,
@@ -93,7 +93,7 @@ func (g *GRPCServer) getChatWs() http.HandlerFunc {
 					return fmt.Errorf("ws.ReadMessage: %w", err)
 				}
 				// The browser client sends the data with a `message` field
-				// Unmarshal into `msr` keeps the previously set `RoomId` and Username
+				// Unmarshal into `msr` keeps the previously set RoomId and Username
 				if err := json.Unmarshal(b, &msr); err != nil {
 					return fmt.Errorf("json.Unmarshal: %w", err)
 				}

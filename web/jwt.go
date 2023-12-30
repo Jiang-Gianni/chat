@@ -12,11 +12,10 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func tokenJWT(w http.ResponseWriter, userID int, username string) (rerr error) {
+func tokenJWT(w http.ResponseWriter, username string) (rerr error) {
 	defer dfrr.Wrap(&rerr, "TokenJWT")
 	exp := time.Now().Add(time.Hour * 24)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":       userID,
 		"username": username,
 		"exp":      exp.Unix(),
 	})
@@ -57,23 +56,22 @@ func requireAuth() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
-				ok, userID, username := isAuth(r)
+				ok, username := isAuth(r)
 				if !ok {
 					denied(w, r)
 					return
 				}
-				ctx := context.WithValue(r.Context(), UserIDCtxKey, userID)
-				ctx = context.WithValue(ctx, UsernameCtxKey, username)
+				ctx := context.WithValue(r.Context(), UsernameCtxKey, username)
 				next.ServeHTTP(w, r.WithContext(ctx))
 			},
 		)
 	}
 }
 
-func isAuth(r *http.Request) (ok bool, userID int, username string) {
+func isAuth(r *http.Request) (ok bool, username string) {
 	cookie, err := r.Cookie(config.JWT_COOKIE)
 	if err != nil || cookie == nil {
-		return false, userID, username
+		return false, username
 	}
 	token, err := jwt.Parse(cookie.Value, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -82,28 +80,24 @@ func isAuth(r *http.Request) (ok bool, userID int, username string) {
 		return []byte(config.JWT_SIGN), nil
 	})
 	if err != nil {
-		return false, userID, username
+		return false, username
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return false, userID, username
+		return false, username
 	}
 	exp, ok := claims["exp"].(float64)
 	if !ok {
-		return false, userID, username
+		return false, username
 	}
 	if float64(time.Now().Unix()) > exp {
-		return false, userID, username
-	}
-	id, ok := claims["id"].(float64)
-	if !ok {
-		return false, userID, username
+		return false, username
 	}
 	username, ok = claims["username"].(string)
 	if !ok {
-		return false, userID, username
+		return false, username
 	}
-	return true, int(id), username
+	return true, username
 }
 
 func getDenied() http.HandlerFunc {
@@ -113,8 +107,7 @@ func getDenied() http.HandlerFunc {
 	}
 }
 
-func userIDUserName(r *http.Request) (int, string) {
-	userID, _ := r.Context().Value(UserIDCtxKey).(int)
+func ctxUsername(r *http.Request) string {
 	username, _ := r.Context().Value(UsernameCtxKey).(string)
-	return int(userID), username
+	return username
 }

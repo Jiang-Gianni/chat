@@ -32,8 +32,8 @@ func (g *GRPCServer) Create(
 	return &CreateResponse{RoomId: int32(roomID)}, nil
 }
 
-func (g *GRPCServer) RunGRPC(addr string, opts ...grpc.ServerOption) (derr error) {
-	defer dfrr.Wrap(&derr, "RunGRPCServer")
+func (g *GRPCServer) Run(addr string, opts ...grpc.ServerOption) (derr error) {
+	defer dfrr.Wrap(&derr, "g.Run")
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		return fmt.Errorf("s.Serve: %w", err)

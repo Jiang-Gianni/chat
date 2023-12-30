@@ -7,12 +7,11 @@
 package message
 
 import (
-	reflect "reflect"
-	sync "sync"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -191,15 +190,12 @@ func file_message_service_proto_rawDescGZIP() []byte {
 	return file_message_service_proto_rawDescData
 }
 
-var (
-	file_message_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-	file_message_service_proto_goTypes  = []interface{}{
-		(*StreamRequest)(nil),         // 0: StreamRequest
-		(*StreamResponse)(nil),        // 1: StreamResponse
-		(*timestamppb.Timestamp)(nil), // 2: google.protobuf.Timestamp
-	}
-)
-
+var file_message_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_message_service_proto_goTypes = []interface{}{
+	(*StreamRequest)(nil),         // 0: StreamRequest
+	(*StreamResponse)(nil),        // 1: StreamResponse
+	(*timestamppb.Timestamp)(nil), // 2: google.protobuf.Timestamp
+}
 var file_message_service_proto_depIdxs = []int32{
 	2, // 0: StreamResponse.sent_at:type_name -> google.protobuf.Timestamp
 	0, // 1: Message.StreamMessage:input_type -> StreamRequest

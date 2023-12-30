@@ -14,6 +14,6 @@ func main() {
 		RoomStreams: map[string]map[*message.Message_StreamMessageServer]struct{}{},
 		Lock:        &sync.Mutex{},
 	}
-	config.PrintListening("messageService", config.MessageServiceAddr)
-	log.Fatal(g.RunGRPC(config.MessageServiceAddr))
+	config.PrintListening(config.MessageService, config.MessageServiceAddr)
+	log.Fatal(g.Run(config.MessageServiceAddr))
 }

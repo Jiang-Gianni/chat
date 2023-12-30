@@ -7,12 +7,11 @@
 package room
 
 import (
-	reflect "reflect"
-	sync "sync"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
+	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -150,13 +149,11 @@ func file_room_service_proto_rawDescGZIP() []byte {
 	return file_room_service_proto_rawDescData
 }
 
-var (
-	file_room_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-	file_room_service_proto_goTypes  = []interface{}{
-		(*CreateRequest)(nil),  // 0: CreateRequest
-		(*CreateResponse)(nil), // 1: CreateResponse
-	}
-)
+var file_room_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_room_service_proto_goTypes = []interface{}{
+	(*CreateRequest)(nil),  // 0: CreateRequest
+	(*CreateResponse)(nil), // 1: CreateResponse
+}
 var file_room_service_proto_depIdxs = []int32{
 	0, // 0: Room.Create:input_type -> CreateRequest
 	1, // 1: Room.Create:output_type -> CreateResponse

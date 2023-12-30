@@ -41,6 +41,7 @@ func main() {
 		MessageQuerier: message.New(config.Sqlite),
 		RoomQuerier:    room.New(config.Sqlite),
 	}
-	config.PrintListening("webService", config.WebServiceAddr)
+
+	config.PrintListening(config.WebService, config.WebServiceAddr)
 	log.Fatal(webServer.Run())
 }

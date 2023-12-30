@@ -5,7 +5,9 @@ select * from message;
 select * from message where id = sqlc.arg(id);
 
 -- name: GetMessageByRoomID :many
-select * from message where room_id = sqlc.arg(room_id) limit 10;
+select A.* from (
+    select * from message where room_id = sqlc.arg(room_id) order by id desc limit 10
+) A order by A.id asc;
 
 -- name: InsertMessage :one
 insert into message(room_id, username, message, sent_at) values (

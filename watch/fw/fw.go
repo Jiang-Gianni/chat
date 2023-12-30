@@ -41,11 +41,14 @@ type FW struct {
 
 type WatchFunc func(filename string, fw *FW)
 
-const (
-	webService     = "./cmd/gRPC/webService"
-	userService    = "./cmd/gRPC/userService"
-	roomService    = "./cmd/gRPC/roomService"
-	messageService = "./cmd/gRPC/messageService"
+var (
+	// 'gRPC' or 'NATS'
+	// version = "gRPC"
+	version        = "NATS"
+	webService     = "./cmd/" + version + "/webService"
+	userService    = "./cmd/" + version + "/userService"
+	roomService    = "./cmd/" + version + "/roomService"
+	messageService = "./cmd/" + version + "/messageService"
 )
 
 var fws = []FW{
