@@ -1,6 +1,7 @@
 package message
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"sync"
@@ -62,7 +63,7 @@ func (g *GRPCServer) StreamMessage(stream Message_StreamMessageServer) (rerr err
 		if err != nil {
 			return fmt.Errorf("stream.Recv: %w", err)
 		}
-		msg, err := g.InsertMessage(stream.Context(), InsertMessageParams{
+		msg, err := g.InsertMessage(context.Background(), InsertMessageParams{
 			RoomID:   int64(r.RoomId),
 			Username: r.Username,
 			Message:  r.Message,

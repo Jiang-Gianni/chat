@@ -122,10 +122,17 @@ func StreamChatPage(qw422016 *qt422016.Writer, rooms []room.Room, roomID int, me
 	qw422016.N().S(`
 
     <div id="side-menu" class="text-center">
+        <article class="pt-10">
+            <strong class="text-yellow">`)
+//line views/chat.html:85
+	qw422016.E().S(username)
+//line views/chat.html:85
+	qw422016.N().S(`</strong>
+        </article>
         <article class="room bg-gray text-black" hx-post="`)
-//line views/chat.html:84
+//line views/chat.html:87
 	qw422016.E().S(config.LogoutEndpoint)
-//line views/chat.html:84
+//line views/chat.html:87
 	qw422016.N().S(`">
             Logout
         </article>
@@ -134,354 +141,360 @@ func StreamChatPage(qw422016 *qt422016.Writer, rooms []room.Room, roomID int, me
             <div id="new-room-error"></div>
         </article>
         `)
-//line views/chat.html:91
+//line views/chat.html:94
 	for i := range rooms {
-//line views/chat.html:91
+//line views/chat.html:94
 		qw422016.N().S(`
         `)
-//line views/chat.html:92
+//line views/chat.html:95
 		if int(rooms[i].ID) == roomID {
-//line views/chat.html:92
+//line views/chat.html:95
 			activeRoom = rooms[i]
 
-//line views/chat.html:92
+//line views/chat.html:95
 			qw422016.N().S(`
         <article class="room bg-blue-900 outline">`)
-//line views/chat.html:93
+//line views/chat.html:96
 			qw422016.E().S(rooms[i].Name)
-//line views/chat.html:93
+//line views/chat.html:96
 			qw422016.N().S(`</article>
         `)
-//line views/chat.html:94
+//line views/chat.html:97
 		} else {
-//line views/chat.html:94
+//line views/chat.html:97
 			qw422016.N().S(`
         <article class="room" hx-get="`)
-//line views/chat.html:95
+//line views/chat.html:98
 			qw422016.E().S(config.ChatRedirectRoomIDEndpoint(int(rooms[i].ID)))
-//line views/chat.html:95
+//line views/chat.html:98
 			qw422016.N().S(`">`)
-//line views/chat.html:95
+//line views/chat.html:98
 			qw422016.E().S(rooms[i].Name)
-//line views/chat.html:95
+//line views/chat.html:98
 			qw422016.N().S(`
         </article>
         `)
-//line views/chat.html:97
+//line views/chat.html:100
 		}
-//line views/chat.html:97
+//line views/chat.html:100
 		qw422016.N().S(`
         `)
-//line views/chat.html:98
+//line views/chat.html:101
 	}
-//line views/chat.html:98
+//line views/chat.html:101
 	qw422016.N().S(`
     </div>
 
     `)
-//line views/chat.html:101
+//line views/chat.html:104
 	if activeRoom.ID > 0 {
-//line views/chat.html:101
+//line views/chat.html:104
 		qw422016.N().S(`
     <div id="chat-container">
         <h2>`)
-//line views/chat.html:103
+//line views/chat.html:106
 		qw422016.E().S(activeRoom.Name)
-//line views/chat.html:103
+//line views/chat.html:106
 		qw422016.N().S(`</h2>
 
         <div id="message-list">
             `)
-//line views/chat.html:106
+//line views/chat.html:109
 		for i := range messages {
-//line views/chat.html:106
+//line views/chat.html:109
 			qw422016.N().S(`
             `)
-//line views/chat.html:107
+//line views/chat.html:110
 			qw422016.N().S(singleMessage(messages[i], messages[i].Username == username))
-//line views/chat.html:107
+//line views/chat.html:110
 			qw422016.N().S(`
             `)
-//line views/chat.html:108
+//line views/chat.html:111
 		}
-//line views/chat.html:108
+//line views/chat.html:111
 		qw422016.N().S(`
             <div id="new-message"></div>
         </div>
 
+        <script>
+            document.addEventListener("htmx:wsAfterMessage", function () {
+                newMessage = document.getElementById("new-message")
+                newMessage.scrollIntoView();
+            })
+        </script>
         <div hx-ext="ws" ws-connect="`)
-//line views/chat.html:112
+//line views/chat.html:121
 		qw422016.E().S(config.ChatWsEndpoint(int(activeRoom.ID)))
-//line views/chat.html:112
+//line views/chat.html:121
 		qw422016.N().S(`">
             `)
-//line views/chat.html:113
+//line views/chat.html:122
 		qw422016.N().S(ChatInput())
-//line views/chat.html:113
+//line views/chat.html:122
 		qw422016.N().S(`
         </div>
 
     </div>
     `)
-//line views/chat.html:117
+//line views/chat.html:126
 	}
-//line views/chat.html:117
+//line views/chat.html:126
 	qw422016.N().S(`
 
 </body>
 
 </html>
 `)
-//line views/chat.html:122
+//line views/chat.html:131
 }
 
-//line views/chat.html:122
+//line views/chat.html:131
 func WriteChatPage(qq422016 qtio422016.Writer, rooms []room.Room, roomID int, messages []message.Message, username string) {
-//line views/chat.html:122
+//line views/chat.html:131
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line views/chat.html:122
+//line views/chat.html:131
 	StreamChatPage(qw422016, rooms, roomID, messages, username)
-//line views/chat.html:122
+//line views/chat.html:131
 	qt422016.ReleaseWriter(qw422016)
-//line views/chat.html:122
+//line views/chat.html:131
 }
 
-//line views/chat.html:122
+//line views/chat.html:131
 func ChatPage(rooms []room.Room, roomID int, messages []message.Message, username string) string {
-//line views/chat.html:122
+//line views/chat.html:131
 	qb422016 := qt422016.AcquireByteBuffer()
-//line views/chat.html:122
+//line views/chat.html:131
 	WriteChatPage(qb422016, rooms, roomID, messages, username)
-//line views/chat.html:122
+//line views/chat.html:131
 	qs422016 := string(qb422016.B)
-//line views/chat.html:122
+//line views/chat.html:131
 	qt422016.ReleaseByteBuffer(qb422016)
-//line views/chat.html:122
+//line views/chat.html:131
 	return qs422016
-//line views/chat.html:122
+//line views/chat.html:131
 }
 
 // <!-- Single message (currentUser have different background color) -->
 
-//line views/chat.html:125
+//line views/chat.html:134
 func streamsingleMessage(qw422016 *qt422016.Writer, msg message.Message, isYou bool) {
-//line views/chat.html:125
+//line views/chat.html:134
 	qw422016.N().S(`
 `)
-//line views/chat.html:126
+//line views/chat.html:135
 	if isYou {
-//line views/chat.html:126
+//line views/chat.html:135
 		qw422016.N().S(`
 <div class="message justify-start flex items-center bg-cyan-700">
     <span class="timestamp p-1">`)
-//line views/chat.html:128
+//line views/chat.html:137
 		qw422016.E().S(msg.SentAt.UTC().Format(time.ANSIC))
-//line views/chat.html:128
+//line views/chat.html:137
 		qw422016.N().S(`</span>
     <strong class="username p-1">(`)
-//line views/chat.html:129
+//line views/chat.html:138
 		qw422016.E().S(msg.Username)
-//line views/chat.html:129
+//line views/chat.html:138
 		qw422016.N().S(`)</strong> `)
-//line views/chat.html:129
+//line views/chat.html:138
 		qw422016.E().S(msg.Message)
-//line views/chat.html:129
+//line views/chat.html:138
 		qw422016.N().S(`
 </div>
 `)
-//line views/chat.html:131
+//line views/chat.html:140
 	} else {
-//line views/chat.html:131
+//line views/chat.html:140
 		qw422016.N().S(`
 <div class="message justify-start flex items-center">
     <span class="timestamp p-1">`)
-//line views/chat.html:133
+//line views/chat.html:142
 		qw422016.E().S(msg.SentAt.UTC().Format(time.ANSIC))
-//line views/chat.html:133
+//line views/chat.html:142
 		qw422016.N().S(`</span>
     <strong class="username p-1">(`)
-//line views/chat.html:134
+//line views/chat.html:143
 		qw422016.E().S(msg.Username)
-//line views/chat.html:134
+//line views/chat.html:143
 		qw422016.N().S(`)</strong> `)
-//line views/chat.html:134
+//line views/chat.html:143
 		qw422016.E().S(msg.Message)
-//line views/chat.html:134
+//line views/chat.html:143
 		qw422016.N().S(`
 </div>
 `)
-//line views/chat.html:136
+//line views/chat.html:145
 	}
-//line views/chat.html:136
+//line views/chat.html:145
 	qw422016.N().S(`
 `)
-//line views/chat.html:137
+//line views/chat.html:146
 }
 
-//line views/chat.html:137
+//line views/chat.html:146
 func writesingleMessage(qq422016 qtio422016.Writer, msg message.Message, isYou bool) {
-//line views/chat.html:137
+//line views/chat.html:146
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line views/chat.html:137
+//line views/chat.html:146
 	streamsingleMessage(qw422016, msg, isYou)
-//line views/chat.html:137
+//line views/chat.html:146
 	qt422016.ReleaseWriter(qw422016)
-//line views/chat.html:137
+//line views/chat.html:146
 }
 
-//line views/chat.html:137
+//line views/chat.html:146
 func singleMessage(msg message.Message, isYou bool) string {
-//line views/chat.html:137
+//line views/chat.html:146
 	qb422016 := qt422016.AcquireByteBuffer()
-//line views/chat.html:137
+//line views/chat.html:146
 	writesingleMessage(qb422016, msg, isYou)
-//line views/chat.html:137
+//line views/chat.html:146
 	qs422016 := string(qb422016.B)
-//line views/chat.html:137
+//line views/chat.html:146
 	qt422016.ReleaseByteBuffer(qb422016)
-//line views/chat.html:137
+//line views/chat.html:146
 	return qs422016
-//line views/chat.html:137
+//line views/chat.html:146
 }
 
 // <!-- ChatInput is to reset the input text content after a send if currentUser -->
 
-//line views/chat.html:140
+//line views/chat.html:149
 func StreamNewMessage(qw422016 *qt422016.Writer, msg message.Message, currentUser string) {
-//line views/chat.html:140
+//line views/chat.html:149
 	qw422016.N().S(`
 `)
-//line views/chat.html:141
+//line views/chat.html:150
 	if msg.Username == currentUser {
-//line views/chat.html:141
+//line views/chat.html:150
 		qw422016.N().S(`
 `)
-//line views/chat.html:142
+//line views/chat.html:151
 		qw422016.N().S(ChatInput())
-//line views/chat.html:142
+//line views/chat.html:151
 		qw422016.N().S(`
 `)
-//line views/chat.html:143
+//line views/chat.html:152
 	}
-//line views/chat.html:143
+//line views/chat.html:152
 	qw422016.N().S(`
 <div id="new-message" hx-swap-oob="beforebegin">
     `)
-//line views/chat.html:145
+//line views/chat.html:154
 	qw422016.N().S(singleMessage(msg, msg.Username == currentUser))
-//line views/chat.html:145
+//line views/chat.html:154
 	qw422016.N().S(`
 </div>
 `)
-//line views/chat.html:147
+//line views/chat.html:156
 }
 
-//line views/chat.html:147
+//line views/chat.html:156
 func WriteNewMessage(qq422016 qtio422016.Writer, msg message.Message, currentUser string) {
-//line views/chat.html:147
+//line views/chat.html:156
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line views/chat.html:147
+//line views/chat.html:156
 	StreamNewMessage(qw422016, msg, currentUser)
-//line views/chat.html:147
+//line views/chat.html:156
 	qt422016.ReleaseWriter(qw422016)
-//line views/chat.html:147
+//line views/chat.html:156
 }
 
-//line views/chat.html:147
+//line views/chat.html:156
 func NewMessage(msg message.Message, currentUser string) string {
-//line views/chat.html:147
+//line views/chat.html:156
 	qb422016 := qt422016.AcquireByteBuffer()
-//line views/chat.html:147
+//line views/chat.html:156
 	WriteNewMessage(qb422016, msg, currentUser)
-//line views/chat.html:147
+//line views/chat.html:156
 	qs422016 := string(qb422016.B)
-//line views/chat.html:147
+//line views/chat.html:156
 	qt422016.ReleaseByteBuffer(qb422016)
-//line views/chat.html:147
+//line views/chat.html:156
 	return qs422016
-//line views/chat.html:147
+//line views/chat.html:156
 }
 
 // <!-- Text area for the input -->
 
-//line views/chat.html:150
+//line views/chat.html:159
 func StreamChatInput(qw422016 *qt422016.Writer) {
-//line views/chat.html:150
+//line views/chat.html:159
 	qw422016.N().S(`
 <form id="form" ws-send>
     <input name="message" autofocus>
 </form>
 `)
-//line views/chat.html:154
+//line views/chat.html:163
 }
 
-//line views/chat.html:154
+//line views/chat.html:163
 func WriteChatInput(qq422016 qtio422016.Writer) {
-//line views/chat.html:154
+//line views/chat.html:163
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line views/chat.html:154
+//line views/chat.html:163
 	StreamChatInput(qw422016)
-//line views/chat.html:154
+//line views/chat.html:163
 	qt422016.ReleaseWriter(qw422016)
-//line views/chat.html:154
+//line views/chat.html:163
 }
 
-//line views/chat.html:154
+//line views/chat.html:163
 func ChatInput() string {
-//line views/chat.html:154
+//line views/chat.html:163
 	qb422016 := qt422016.AcquireByteBuffer()
-//line views/chat.html:154
+//line views/chat.html:163
 	WriteChatInput(qb422016)
-//line views/chat.html:154
+//line views/chat.html:163
 	qs422016 := string(qb422016.B)
-//line views/chat.html:154
+//line views/chat.html:163
 	qt422016.ReleaseByteBuffer(qb422016)
-//line views/chat.html:154
+//line views/chat.html:163
 	return qs422016
-//line views/chat.html:154
+//line views/chat.html:163
 }
 
 // <!-- In case of errors from confirming a new room creation it targets id="new-room-error"-->
 
-//line views/chat.html:157
+//line views/chat.html:166
 func StreamNewChatError(qw422016 *qt422016.Writer, text string) {
-//line views/chat.html:157
+//line views/chat.html:166
 	qw422016.N().S(`
 <small hx-get="`)
-//line views/chat.html:158
+//line views/chat.html:167
 	qw422016.E().S(config.DiscardEndpoint)
-//line views/chat.html:158
+//line views/chat.html:167
 	qw422016.N().S(`" class="text-red-700" hx-trigger="load delay:5s" hx-swap="outerHTML">`)
-//line views/chat.html:159
+//line views/chat.html:168
 	qw422016.E().S(text)
-//line views/chat.html:159
+//line views/chat.html:168
 	qw422016.N().S(`</small>
 `)
-//line views/chat.html:160
+//line views/chat.html:169
 }
 
-//line views/chat.html:160
+//line views/chat.html:169
 func WriteNewChatError(qq422016 qtio422016.Writer, text string) {
-//line views/chat.html:160
+//line views/chat.html:169
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line views/chat.html:160
+//line views/chat.html:169
 	StreamNewChatError(qw422016, text)
-//line views/chat.html:160
+//line views/chat.html:169
 	qt422016.ReleaseWriter(qw422016)
-//line views/chat.html:160
+//line views/chat.html:169
 }
 
-//line views/chat.html:160
+//line views/chat.html:169
 func NewChatError(text string) string {
-//line views/chat.html:160
+//line views/chat.html:169
 	qb422016 := qt422016.AcquireByteBuffer()
-//line views/chat.html:160
+//line views/chat.html:169
 	WriteNewChatError(qb422016, text)
-//line views/chat.html:160
+//line views/chat.html:169
 	qs422016 := string(qb422016.B)
-//line views/chat.html:160
+//line views/chat.html:169
 	qt422016.ReleaseByteBuffer(qb422016)
-//line views/chat.html:160
+//line views/chat.html:169
 	return qs422016
-//line views/chat.html:160
+//line views/chat.html:169
 }

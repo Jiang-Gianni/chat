@@ -81,6 +81,9 @@
     %}
 
     <div id="side-menu" class="text-center">
+        <article class="pt-10">
+            <strong class="text-yellow">{%s username %}</strong>
+        </article>
         <article class="room bg-gray text-black" hx-post="{%s config.LogoutEndpoint %}">
             Logout
         </article>
@@ -109,6 +112,12 @@
             <div id="new-message"></div>
         </div>
 
+        <script>
+            document.addEventListener("htmx:wsAfterMessage", function () {
+                newMessage = document.getElementById("new-message")
+                newMessage.scrollIntoView();
+            })
+        </script>
         <div hx-ext="ws" ws-connect="{%s config.ChatWsEndpoint(int(activeRoom.ID)) %}">
             {%s= ChatInput() %}
         </div>

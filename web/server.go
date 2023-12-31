@@ -24,11 +24,11 @@ var wsUpgrader = websocket.Upgrader{
 
 func index() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// ok, _ := isAuth(r)
-		// if ok {
-		// 	http.Redirect(w, r, config.ChatEndpoint, http.StatusSeeOther)
-		// 	return
-		// }
+		ok, _ := isAuth(r)
+		if ok {
+			http.Redirect(w, r, config.ChatEndpoint, http.StatusSeeOther)
+			return
+		}
 		views.WriteLoginPage(w)
 	}
 }

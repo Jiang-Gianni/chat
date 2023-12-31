@@ -21,11 +21,11 @@ func (n *NATSServer) getChat() http.HandlerFunc {
 		roomID, _ := strconv.Atoi(roomIDString)
 		rooms, err := n.RoomQuerier.GetRooms(r.Context())
 		if err != nil {
-			n.Log.Error(fmt.Sprintf("cs.GetRooms: %s", err), "service", "web")
+			n.Log.Error(fmt.Sprintf("n.GetRooms: %s", err), "service", "web")
 		}
 		messages, err := n.MessageQuerier.GetMessageByRoomID(r.Context(), int64(roomID))
 		if roomID > 0 && err != nil {
-			n.Log.Error(fmt.Sprintf("cs.GetMessageByRoomID: %s", err), "service", "web")
+			n.Log.Error(fmt.Sprintf("n.GetMessageByRoomID: %s", err), "service", "web")
 		}
 		username := ctxUsername(r)
 		views.WriteChatPage(w, rooms, roomID, messages, username)
@@ -57,6 +57,7 @@ func (n *NATSServer) getChatWs() http.HandlerFunc {
 			RoomID:   int64(roomID),
 			Username: username,
 		}
+		roomSubject := config.NATSMessageStreamRoom(roomIDString)
 
 		readLoop := func() (rerr error) {
 			defer dfrr.Wrap(&rerr, "readLoop")
@@ -71,7 +72,7 @@ func (n *NATSServer) getChatWs() http.HandlerFunc {
 					return fmt.Errorf("json.Unmarshal: %w", err)
 				}
 				msg.SentAt = time.Now()
-				err = n.EC.Publish(config.NATSMessageStreamRoom(roomIDString), msg)
+				err = n.EC.Publish(roomSubject, msg)
 				if err != nil {
 					return fmt.Errorf("n.EC.Publish: %w", err)
 				}
@@ -81,12 +82,18 @@ func (n *NATSServer) getChatWs() http.HandlerFunc {
 		writeLoop := func() (rerr error) {
 			defer dfrr.Wrap(&rerr, "writeLoop")
 			quitError := make(chan error)
-			defer close(quitError)
+			defer func() {
+				// Set to nil so that the select with default doesn't block or panic
+				quitError = nil
+			}()
 			sub, err := n.EC.Subscribe(
-				config.NATSMessageStreamRoom(roomIDString),
+				roomSubject,
 				func(msg *message.Message) {
 					if err := WriteChatMessage(*msg, ws, username); err != nil {
-						quitError <- fmt.Errorf("WriteChatMessage: %w", err)
+						select {
+						case quitError <- fmt.Errorf("WriteChatMessage: %w", err):
+						default:
+						}
 					}
 				},
 			)

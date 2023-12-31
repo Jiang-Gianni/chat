@@ -42,6 +42,7 @@ func (g *GRPCServer) getChatWs() http.HandlerFunc {
 		if err != nil {
 			g.Log.Error(fmt.Sprintf("wsUpgrader.Upgrade: %s", err), "service", "web")
 			http.Error(w, "websocket handshake error", http.StatusInternalServerError)
+			return
 		}
 		defer func() {
 			if err := ws.Close(); err != nil {
@@ -54,6 +55,7 @@ func (g *GRPCServer) getChatWs() http.HandlerFunc {
 		if err != nil {
 			g.Log.Error(fmt.Sprintf("strconv.Atoi: %s", err), "service", "web")
 			http.Error(w, "room ID error", http.StatusInternalServerError)
+			return
 		}
 
 		// Message Service Client
