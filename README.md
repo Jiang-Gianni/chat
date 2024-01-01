@@ -125,7 +125,7 @@ When a client sends a message to the chat, it is forwarded to the WebService and
 
 The WebService then writes the received message to all corresponding WebSocket connections.
 
-A more appropriate approach could have been to simply have a unidirectional stream (from WebService to MessageService) and have WebService keep track of all connections' room IDs, but implementing and testing a gRPC bidirectional streaming looked cooler ¯\_(ツ)_/¯
+A more appropriate approach could have been to simply have a unidirectional stream (from WebService to MessageService) and have WebService keep track of all connections' room IDs, but implementing and testing a gRPC bidirectional streaming looked cooler ¯\\_(ツ)_/¯
 
 <picture>
   <img src="./img/gRPCchat.svg"/>
