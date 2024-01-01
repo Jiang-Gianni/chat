@@ -1,4 +1,4 @@
-- [Demo (TODO)](#demo-todo)
+- [Demo](#demo)
 - [Architecture](#architecture)
 - [Frontend](#frontend)
 - [DB](#db)
@@ -11,7 +11,10 @@
   - [Chat NATS](#chat-nats)
 
 
-## Demo (TODO)
+## Demo
+
+https://github.com/Jiang-Gianni/chat/assets/71674846/2c14a2d1-82b0-4180-821e-068fa837e0f1
+
 
 
 ## Architecture
