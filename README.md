@@ -20,10 +20,10 @@ There are two versions: one with [gRPC](https://grpc.io/) and the other with [NA
 
 <p>
   <picture>
-  <img src="./img/gRPC.svg" width="49%" height="1200"/>
+  <img src="./img/gRPC.svg" width="49%"/>
   </picture>
   <picture>
-  <img src="./img/NATS.svg" width="50%" height="1200"/>
+  <img src="./img/NATS.svg" width="50%"/>
   </picture>
 </p>
 
