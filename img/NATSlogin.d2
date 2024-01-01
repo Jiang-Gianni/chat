@@ -1,0 +1,18 @@
+direction:right
+NATS{
+    shape:queue
+}
+
+Client -> WebService: HTTP POST "/login" (1)
+
+Client -- WebService: OK / Error (7)
+
+WebService -> NATS: publish LoginEvent (2)
+
+UserService <- NATS: receive LoginEvent (3)
+
+UserService <-> DB: Check credentials (4)
+
+UserService -> NATS: publish LoginReply (5)
+
+WebService <- NATS: receive LoginReply (6)

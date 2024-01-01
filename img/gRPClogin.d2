@@ -1,0 +1,11 @@
+direction:right
+
+Client -> WebService: HTTP POST "/login" (1)
+
+WebService -> UserService: gRPC LoginRequest (2)
+
+UserService <-> DB: Check credentials (3)
+
+WebService <- UserService: gRPC LoginResponse (4)
+
+Client -- WebService: OK / Error (5)

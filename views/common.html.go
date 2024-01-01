@@ -29,8 +29,6 @@ func StreamCommonImport(qw422016 *qt422016.Writer) {
 
 <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
 
-<script src="https://unpkg.com/htmx.org/dist/ext/sse.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
 
 <style>
@@ -47,31 +45,31 @@ func StreamCommonImport(qw422016 *qt422016.Writer) {
     const isOpenClass = "modal-is-open", openingClass = "modal-is-opening", closingClass = "modal-is-closing", animationDuration = 400; let visibleModal = null; const toggleModal = e => { e.preventDefault(); e = document.getElementById(e.currentTarget.getAttribute("data-target")); (void 0 !== e && null != e && isModalOpen(e) ? closeModal : openModal)(e) }, isModalOpen = e => !(!e.hasAttribute("open") || "false" == e.getAttribute("open")), openModal = e => { isScrollbarVisible() && document.documentElement.style.setProperty("--scrollbar-width", getScrollbarWidth() + "px"), document.documentElement.classList.add(isOpenClass, openingClass), setTimeout(() => { visibleModal = e, document.documentElement.classList.remove(openingClass) }, animationDuration), e.setAttribute("open", !0) }, closeModal = e => { visibleModal = null, document.documentElement.classList.add(closingClass), setTimeout(() => { document.documentElement.classList.remove(closingClass, isOpenClass), document.documentElement.style.removeProperty("--scrollbar-width"), e.removeAttribute("open") }, animationDuration) }, getScrollbarWidth = (document.addEventListener("click", e => { null == visibleModal || visibleModal.querySelector("article").contains(e.target) || closeModal(visibleModal) }), document.addEventListener("keydown", e => { "Escape" === e.key && null != visibleModal && closeModal(visibleModal) }), () => { var e = document.createElement("div"), t = (e.style.visibility = "hidden", e.style.overflow = "scroll", e.style.msOverflowStyle = "scrollbar", document.body.appendChild(e), document.createElement("div")), t = (e.appendChild(t), e.offsetWidth - t.offsetWidth); return e.parentNode.removeChild(e), t }), isScrollbarVisible = () => document.body.scrollHeight > screen.height;
 </script>
 `)
-//line views/common.html:27
+//line views/common.html:25
 }
 
-//line views/common.html:27
+//line views/common.html:25
 func WriteCommonImport(qq422016 qtio422016.Writer) {
-//line views/common.html:27
+//line views/common.html:25
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line views/common.html:27
+//line views/common.html:25
 	StreamCommonImport(qw422016)
-//line views/common.html:27
+//line views/common.html:25
 	qt422016.ReleaseWriter(qw422016)
-//line views/common.html:27
+//line views/common.html:25
 }
 
-//line views/common.html:27
+//line views/common.html:25
 func CommonImport() string {
-//line views/common.html:27
+//line views/common.html:25
 	qb422016 := qt422016.AcquireByteBuffer()
-//line views/common.html:27
+//line views/common.html:25
 	WriteCommonImport(qb422016)
-//line views/common.html:27
+//line views/common.html:25
 	qs422016 := string(qb422016.B)
-//line views/common.html:27
+//line views/common.html:25
 	qt422016.ReleaseByteBuffer(qb422016)
-//line views/common.html:27
+//line views/common.html:25
 	return qs422016
-//line views/common.html:27
+//line views/common.html:25
 }

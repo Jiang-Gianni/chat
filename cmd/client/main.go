@@ -4,18 +4,22 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"time"
 )
 
 const localhost = "http://localhost:3000/"
 
 func main() {
+	defer func(start time.Time) {
+		fmt.Println("Done sending messages")
+		fmt.Println("Time since start: ", time.Since(start))
+	}(time.Now())
 	wg := &sync.WaitGroup{}
 	for i := range [10]int{} {
 		wg.Add(1)
 		go loop(i+1, wg)
 	}
 	wg.Wait()
-	fmt.Println("Done sending")
 }
 
 func loop(i int, wg *sync.WaitGroup) (err error) {

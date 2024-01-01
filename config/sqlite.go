@@ -32,7 +32,6 @@ func NewSqlite(filename string) *sql.DB {
 	return db
 }
 
-// Return a *sql.DB for a sqlite databate to use in testing.
 func GetSqliteTest() (testSqlite *sql.DB, cleanup func(), err error) {
 	defer dfrr.Wrap(&err, "GetSqliteTest")
 	dbName := nuid.New().Next() + ".db"
@@ -55,7 +54,6 @@ func GetSqliteTest() (testSqlite *sql.DB, cleanup func(), err error) {
 	return
 }
 
-// Function to initialize the tables
 func SqliteInit(sqlite *sql.DB) (rerr error) {
 	defer dfrr.Wrap(&rerr, "SqliteInit")
 	fileList := []string{

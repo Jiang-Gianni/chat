@@ -1,0 +1,37 @@
+direction:right
+Room A {
+    Client A
+    Client B
+}
+
+Room B{
+    Client C
+}
+
+WebService{
+    Connection A
+    Connection B
+    Connection C
+}
+
+MessageService{}
+
+NATS{
+    shape: queue
+}
+
+DB
+
+Room A.Client A -> WebService.Connection A: WebSocket, Message from A (1)
+Room A.Client B -- WebService.Connection B: WebSocket
+Room B.Client C -- WebService.Connection C: WebSocket
+
+WebService.Connection A <-> NATS: tcp, Publish Message from A (2), Receive Message from A (3)
+WebService.Connection B <-> NATS: tcp, Receive Message from A (3)
+
+NATS -> MessageService: tcp, Receive Message from A (3)
+MessageService -> DB: Store Message from A (4)
+
+
+WebService.Connection A -> Room A.Client A: Message to Room A Clients (5)
+WebService.Connection B -> Room A.Client B: Message to Room A Clients (5)

@@ -1,0 +1,34 @@
+direction: right
+
+Client Side Rendering{
+    Datasource: {
+      shape: step
+    }
+    Backend(data API): {
+      shape: step
+    }
+    Frontend Framework: {
+      shape: step
+    }
+    HTML: {
+      shape: step
+    }
+    Datasource -> Backend(data API) : Data retrival
+    Backend(data API) -> Frontend Framework: HTTP
+    Frontend Framework -> HTML: Parsing
+}
+
+Server Side Rendering{
+    Datasource: {
+      shape: step
+    }
+    Backend: {
+      shape: step
+    }
+    HTML: {
+      shape: step
+    }
+
+    Datasource -> Backend : Data retrival
+    Backend -> HTML: HTTP
+}

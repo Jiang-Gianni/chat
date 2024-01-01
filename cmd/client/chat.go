@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -24,8 +25,8 @@ func chatws(cookies []*http.Cookie, user string) error {
 	if err != nil {
 		return err
 	}
-	for i := range [200]int{} {
-		// time.Sleep(time.Millisecond * 60)
+	for i := range [300]int{} {
+		time.Sleep(time.Millisecond * 10)
 		emoji := "👋"
 		err := conn.WriteJSON(map[string]string{
 			"message": fmt.Sprintf("Message n %d from %s %s", i+1, user, emoji),
